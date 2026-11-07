@@ -11,6 +11,12 @@ through EDITO catalogue links and read without a password. The exported density
 NetCDF passed MyOcean import and final-frame rendering. See the
 [full-run check record](../dev/validation/edito_30day_20261107.json).
 
+### Plan your time
+
+Allow approximately **15–30 minutes for a first walkthrough**, depending on Jupyter experience, computing resources and download speed. This is a guide for completing the workflow, not a guarantee or enough time for a full study of the model. Initial environment installation and downloads may take additional time.
+
+For a **20-minute classroom slot**, instructors should prepare and check the environment beforehand. Students can follow the default scenario through to the outputs, waiting for each cell to finish and checking for errors. Return to the notebook later to study the currents, assumptions, encounter matrices and sensitivity experiments in detail.
+
 ## 1. Start a Jupyter workspace
 
 Sign in to [EDITO Datalab](https://datalab.dive.edito.eu/) with your EDITO
@@ -130,6 +136,8 @@ above. This symptom can indicate a resource limit; it does not confirm the cause
    choosing your settings. The first current download and coastline setup need
    network access. Reuse of the cached current file avoids repeat downloads.
 
+At **5. Run and retain provenance**, **Allow several minutes or longer for this step. Wait for the simulation cell to finish and display its output before proceeding.** A running cell shows `[*]`; a completed cell shows an execution number such as `[11]`. Do not start the same simulation cell again while it is running. If it reports an error, resolve it before continuing. Follow progress in `opendrift.log`.
+
 When changing the run profile, rerun the scenario-settings cell and all cells
 after it. This rebuilds the releases, selects matching currents and creates a
 new results folder. Do not rerun just the simulation cell on an already-used
@@ -154,6 +162,18 @@ them in JupyterLab's file browser and selecting **Download**. A ZIP contains
 results, not the current forcing cache or the notebook's credential variables.
 
 ## Visualize the result
+
+#### Download the density NetCDF before opening the viewer
+
+First run the **final export cell** and wait for **count conservation: passed**. It prints the full results-folder path.
+
+1. In the JupyterLab file browser, open `runs/ogasawara-larval-drift/results/`, then the folder matching the **timestamp and run ID printed by your notebook**. Paths are relative to the kernel's working directory; use the printed path if running another notebook variant.
+2. Find **`edito_larval_density.nc`**, right-click it, and choose **Download**. Keep the file on your computer so you can select it in the viewer's upload dialog.
+3. Open [EDITO MyOcean](https://my-ocean.dive.edito.eu/), choose **Add layer → Personal Catalogue → Upload**, and select the downloaded file. Wait for processing.
+4. Add **Active model particle density, all sources** to the map (the `particle_density` variable), or choose a source-specific density layer. Select a simulation date with the time slider.
+
+Use **`edito_larval_density.nc`** for this upload. The native `trajectories.nc` contains the full tracks, and `edito_larval_density_cell_area.nc` is a scientific companion; neither is the density-map upload. Trajectory-line import using `edito_trajectories.geojson` is described separately below.
+
 
 The simulation already writes **`trajectories.nc`** with particle positions and
 status. This trajectory-shaped file is for scientific analysis and OpenDrift;

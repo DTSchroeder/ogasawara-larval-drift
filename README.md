@@ -6,6 +6,12 @@ move between three island groups in Japan.
 **Start with [tutorial.ipynb](tutorial.ipynb).** This is the only notebook students
 need on EDITO. It contains all helper code and source locations.
 
+### Plan your time
+
+Allow approximately **15–30 minutes for a first walkthrough**, depending on Jupyter experience, computing resources and download speed. This is a guide for completing the workflow, not a guarantee or enough time for a full study of the model. Initial environment installation and downloads may take additional time.
+
+For a **20-minute classroom slot**, instructors should prepare and check the environment beforehand. Students can follow the default scenario through to the outputs, waiting for each cell to finish and checking for errors. Return to the notebook later to study the currents, assumptions, encounter matrices and sensitivity experiments in detail.
+
 ## Run the tutorial on EDITO
 
 1. Open a JupyterLab service in [EDITO Datalab](https://datalab.dive.edito.eu/).
@@ -31,6 +37,9 @@ need on EDITO. It contains all helper code and source locations.
 
 4. Review the settings before running the simulation. The default follows 2,700
    particles for 30 days per cohort. Use `quick_check` for a short setup check.
+5. At **5. Run and retain provenance**, allow several minutes or longer. Wait for
+   the simulation cell to finish and display output before proceeding: `[*]`
+   means it is still running. Resolve any error before continuing.
 
 See the [detailed EDITO guide](docs/EDITO.md) for workspace setup, troubleshooting,
 and saving results to permanent storage.
@@ -49,10 +58,14 @@ See [model notes and attribution](docs/MODEL-NOTES.md) and [data sources](docs/D
 
 ## View the results
 
-The notebook saves each run under `runs/ogasawara-larval-drift/results/`.
-Upload **`edito_larval_density.nc`** through **Personal Catalogue → Upload** in
-[EDITO MyOcean](https://my-ocean.dive.edito.eu/). Choose `particle_density` and
-move the time slider. If the automatic colour range shows 0–0, set the layer's
+After the final export cell reports **count conservation: passed**, open the
+results folder printed by the notebook, under
+`runs/ogasawara-larval-drift/results/<timestamp>-<run-id>/`.
+In the JupyterLab file browser, right-click **`edito_larval_density.nc`** and
+choose **Download**. Then open [EDITO MyOcean](https://my-ocean.dive.edito.eu/),
+choose **Add layer → Personal Catalogue → Upload**, and select the downloaded
+file. Wait for processing, add **Active model particle density, all sources**
+(`particle_density`), and move the time slider. If the automatic colour range shows 0–0, set the layer's
 minimum to **0** and maximum to **0.5** particles/km² as a starting point.
 If you see only a grey rectangle, follow the [viewer display walkthrough](docs/EDITO.md#if-the-viewer-shows-only-a-grey-rectangle).
 
