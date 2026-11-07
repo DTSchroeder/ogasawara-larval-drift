@@ -1,0 +1,18 @@
+name: ogasawara-larval-drift
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - opendrift=1.14.12
+  - copernicusmarine>=2.2,<3
+  - jupyterlab>=4,<5
+  - ipykernel
+  - numpy
+  - pandas
+  - xarray
+  - netcdf4
+  - matplotlib
+  - cartopy
+  - pyproj
+  - folium
+  - nbformat

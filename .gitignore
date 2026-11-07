@@ -1,0 +1,12 @@
+data/
+results/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.env
+.env.*
+!.env.example
+.copernicusmarine/
+credentials*
+*.log
+.DS_Store
