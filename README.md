@@ -14,14 +14,21 @@ need on EDITO. It contains all helper code and source locations.
    ```bash
    git clone https://github.com/DTSchroeder/ogasawara-larval-drift.git
    cd ogasawara-larval-drift
-   uv venv --python 3.12 .venv
-   uv pip install --python .venv/bin/python -r requirements.txt
+   python -m pip install --user uv
+   python -m uv venv --python 3.12 .venv
+   python -m uv pip install --python .venv/bin/python -r requirements.txt
    .venv/bin/python -m ipykernel install --user --name ogasawara-larval-drift --display-name "Ogasawara OpenDrift"
    ```
 
-3. Open **`tutorial.ipynb`**, select the **Ogasawara OpenDrift** kernel, and run
+   Run the commands one at a time and wait for each to finish. Stop if any fails.
+   Complete installation in the same EDITO service where you open the notebook.
+
+3. Open **`tutorial.ipynb`**, choose **Kernel → Change Kernel → Ogasawara OpenDrift**, and run
    cells in order with **Shift+Enter**. Leave credentials blank: the default
    current-data route uses public EDITO catalogue links.
+   If the first cell reports `PackageNotFoundError` for OpenDrift, check the
+   selected kernel: the default Python kernel does not contain the tutorial packages.
+
 4. Review the settings before running the simulation. The default follows 2,700
    particles for 30 days per cohort. Use `quick_check` for a short setup check.
 

@@ -45,26 +45,50 @@ so no companion Python modules need to be uploaded to execute it.
 
 ## 3. Install dependencies and register the kernel
 
-The EDITO **Jupyter-python 2.5.7** service inspected on 7 November 2026 uses
-Python 3.13 for its default kernel and provides `uv`, but no Conda/Mamba.
-Use an isolated Python 3.12 environment for this notebook. In the repository's
-terminal folder, run:
+EDITO service images differ: some provide `uv`, while others show a Conda
+`(base)` prompt and have no `uv` command. The default notebook kernel may use
+Python 3.13 without OpenDrift. Create a separate Python 3.12 environment using
+the following steps, then explicitly select its notebook kernel.
+
+Run each command **one at a time in the JupyterLab terminal**, waiting for it to
+finish. If a command fails, stop and resolve that error before continuing.
+
+First install `uv` if it is missing, and check that Python can run it:
 
 ```bash
-uv venv --python 3.12 .venv
-uv pip install --python .venv/bin/python -r requirements.txt
+python -m pip install --user uv
+python -m uv --version
+```
+
+Create the environment inside the repository folder:
+
+```bash
+python -m uv venv --python 3.12 .venv
+```
+
+Install the tutorial packages and wait until the terminal prompt returns:
+
+```bash
+python -m uv pip install --python .venv/bin/python -r requirements.txt
+```
+
+Register the notebook kernel:
+
+```bash
 .venv/bin/python -m ipykernel install --user --name ogasawara-larval-drift --display-name "Ogasawara OpenDrift"
 ```
 
-This installs into the local `.venv` and leaves the service's default Python
-environment unchanged. The service used for deployment had Python 3.12 available
-at `/usr/bin/python3.12`; `uv` can select it automatically. The installed kernel
-must be selected in the notebook before running the dependency check.
+Using `python -m uv` avoids relying on the `uv` executable being on the shell's
+search path. Dependencies are installed into `.venv`; the service's default
+Python environment is unchanged. Do not move this folder after registering the
+kernel, because its registration refers to the environment's full path.
+
+Complete these steps in the **same EDITO service where you open the notebook**.
+A kernel installed in another service is not automatically available here.
 
 ### Alternative for an image with Conda/Mamba
 
-If your EDITO image provides Mamba or Conda instead of `uv`, the original
-environment file is also available:
+For users who prefer Conda/Mamba, the original environment file is also available:
 
 ```bash
 mamba env create -f dev/environment.yml
@@ -76,6 +100,12 @@ existing environment rather than trying to create it again. OpenDrift also
 [documents installation in EDITO's JupyterHub](https://opendrift.github.io/install.html#install-and-use-on-wekeo-and-edito),
 but the available installation tools depend on the service image you choose.
 
+Check `conda env list` after installation: `ogasawara-larval-drift` must appear
+before running `conda run -n ogasawara-larval-drift ...`. A `(base)` prompt does
+not mean that the tutorial environment exists. If Conda returns to the prompt
+while solving without creating the environment, use the `python -m uv` route
+above. This symptom can indicate a resource limit; it does not confirm the cause.
+
 ## 4. Open and configure the notebook
 
 1. In JupyterLab's file browser, open the cloned repository and double-click
@@ -83,18 +113,20 @@ but the available installation tools depend on the service image you choose.
    the Colab installation notebook.
 2. Select **Kernel → Change Kernel → Ogasawara OpenDrift**. Refresh JupyterLab
    if the newly registered kernel is not listed.
-3. Run the first dependency-check cell with **Shift+Enter**. It should print
+3. Confirm the notebook's upper-right kernel selector says **Ogasawara OpenDrift**.
+   Installing packages in a terminal does not switch an already-open notebook's kernel.
+4. Run the first dependency-check cell with **Shift+Enter**. It should print
    package versions, including OpenDrift 1.14.12.
-4. For the default `CURRENT_SOURCE = 'edito_catalogue'`, leave the early
+5. For the default `CURRENT_SOURCE = 'edito_catalogue'`, leave the early
    Copernicus username/password variables blank. If you choose
    `CURRENT_SOURCE = 'copernicus'`, enter your own login and run that account cell.
    Values entered in code are saved in your notebook copy. Clear them before
    sharing or committing it. Do not put EDITO or S3 credentials in that cell.
-5. Find the scenario-settings cell. Use `RUN_PROFILE = 'quick_check'` for a
+6. Find the scenario-settings cell. Use `RUN_PROFILE = 'quick_check'` for a
    24-hour, 90-particle pipeline check first. Use `RUN_PROFILE = '30_day'` for
    the full 2,700-particle scenario. The short check's encounters are not a
    substitute for the 30-day connectivity analysis.
-6. Run the remaining cells in order, or use **Run → Run All Cells** after
+7. Run the remaining cells in order, or use **Run → Run All Cells** after
    choosing your settings. The first current download and coastline setup need
    network access. Reuse of the cached current file avoids repeat downloads.
 
@@ -179,6 +211,10 @@ Relevant current EDITO documentation:
 
 | Symptom | What to do |
 | --- | --- |
+| `uv: command not found` | Install with `python -m pip install --user uv`, then use `python -m uv` as shown above. |
+| `EnvironmentLocationNotFound` | The named Conda environment was not created. Check `conda env list`; finish installation or use the `python -m uv` route before registering the kernel. |
+| `PackageNotFoundError: No package metadata was found for opendrift` | Select **Kernel → Change Kernel → Ogasawara OpenDrift**, then rerun the first cell. A traceback under `/opt/conda/lib/python3.13` indicates the default Python environment is being used rather than the tutorial's Python 3.12 environment. |
+| `.venv/bin/python` does not exist | Complete the environment setup in this repository folder, in this same EDITO service. |
 | `ModuleNotFoundError` | Check that the selected kernel is **Ogasawara OpenDrift**, then rerun the dependency check. Installing into a different terminal environment does not change the notebook kernel. |
 | Authentication fails | Check the Copernicus username/password variables, rerun the account cell and rerun the download. Your EDITO password is a different login. |
 | `CURRENT_FILE` or scenario variables are missing | Run the imports and scenario settings, then download/validate currents before starting the model. Use Run All when starting a fresh kernel. |
@@ -217,7 +253,7 @@ longer dates, or it will show an out-of-range warning.
 
 ## Show individual drift paths on the map
 
-The cell below exports **`edito_trajectories.geojson`**, with up to 30 particles per source island group, sampled every sixth saved output (six hours with the default hourly output). First/last positions are retained, and missing or inactive gaps are split. Each source is one multi-part geometry to avoid dozens of labels.
+The trajectory-export cell in the notebook creates **`edito_trajectories.geojson`**, with up to 30 particles per source island group, sampled every sixth saved output (six hours with the default hourly output). First/last positions are retained, and missing or inactive gaps are split. Each source is one multi-part geometry to avoid dozens of labels.
 
 1. Download `edito_trajectories.geojson` from the run folder (right-click the file in JupyterLab → **Download**).
 2. In the MyOcean **map**, choose **Import → GeoJSON**, select the file, select all three island groups, and press **Import 3**. Leave **Split multi-part geometries** off. This uses the geometry-import tool, separate from the NetCDF Personal Catalogue upload.
