@@ -29,6 +29,18 @@ no account credentials.** Values entered in notebook code will be saved in your
 copy: clear them and clear outputs before sharing or committing a notebook.
 Do not upload Copernicus credential files or runtime data to this repository.
 
+## Run on EDITO
+
+Follow the [step-by-step EDITO guide](README-EDITO.md): launch a JupyterLab
+service in [EDITO Datalab](https://datalab.dive.edito.eu/), clone this repository,
+install `environment.yml`, and select the **Ogasawara OpenDrift** kernel.
+Open **`ogasawara_larval_drift_edito.ipynb`**, enter your own Copernicus login,
+and try `RUN_PROFILE = 'quick_check'` before the full 30-day run.
+
+The guide includes terminal commands, kernel selection, result downloads,
+permanent S3 storage, troubleshooting, and import of the density NetCDF into
+EDITO MyOcean. EDITO execution and viewer import remain to be verified on-platform.
+
 ## Default scenario
 
 - 2,700 equal-weight particles: 300 per source per day, over three daily releases.
