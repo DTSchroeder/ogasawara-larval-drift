@@ -13,6 +13,7 @@ From the repository root, in the installed notebook environment:
 ```bash
 python dev/validate_edito_catalogue.py
 python dev/validate_edito_export.py
+python dev/validate_trajectory_export.py
 python dev/validate_notebook.py
 ```
 

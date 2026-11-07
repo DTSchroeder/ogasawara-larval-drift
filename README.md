@@ -55,3 +55,5 @@ results to permanent EDITO storage before stopping the notebook service.
 
 - [Google Colab version](https://colab.research.google.com/github/DTSchroeder/ogasawara-larval-drift/blob/main/extras/colab.ipynb), for students using Colab instead of EDITO.
 - [Development and validation](dev/README.md), for instructors and maintainers.
+
+The tutorial also exports `edito_trajectories.geojson` for **Import → GeoJSON** in the MyOcean map. It contains static sampled drift paths grouped by source island; the time slider animates the density layer, not these full-period lines.

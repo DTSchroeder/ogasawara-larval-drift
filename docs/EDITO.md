@@ -214,3 +214,13 @@ upper limit for the frame being inspected. This changes display only; it does
 not alter counts, trajectories or connectivity. The tested full-run view uses
 this manual range. Remove the old one-day layer from the map when comparing
 longer dates, or it will show an out-of-range warning.
+
+## Show individual drift paths on the map
+
+The cell below exports **`edito_trajectories.geojson`**, with up to 30 particles per source island group, sampled every sixth saved output (six hours with the default hourly output). First/last positions are retained, and missing or inactive gaps are split. Each source is one multi-part geometry to avoid dozens of labels.
+
+1. Download `edito_trajectories.geojson` from the run folder (right-click the file in JupyterLab → **Download**).
+2. In the MyOcean **map**, choose **Import → GeoJSON**, select the file, select all three island groups, and press **Import 3**. Leave **Split multi-part geometries** off. This uses the geometry-import tool, separate from the NetCDF Personal Catalogue upload.
+3. The paths show the **entire run** and remain static when the time slider moves. The density NetCDF layer still follows the selected time. The viewer may apply its own line colours; click a path's label to identify its source. Collapse label details or drag labels aside to uncover the lines.
+
+This is a display sample, not all 2,700 tracks. The complete hourly trajectories remain in `trajectories.nc`; encounter matrices still use every particle and saved output. Adjust `TRACKS_PER_SOURCE` or `TRACK_OUTPUT_STRIDE` for map readability; these settings do not rerun or change the simulation.

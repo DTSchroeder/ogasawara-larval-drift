@@ -118,3 +118,97 @@ def export_edito_density(trajectories, path, source_names, bounds,
             'bytes': path.stat().st_size, 'dimensions': dict(ds.sizes),
             'variables': list(ds.data_vars), 'active_particles_per_time': valid_counts,
             'count_conservation': 'passed', 'viewer_import_tested': False}
+
+
+import json
+from pathlib import Path
+import numpy as np
+
+
+def export_trajectory_geojson(trajectories, path, source_names,
+                              max_per_source=30, output_stride=6, max_age_days=30):
+    """Static sampled paths for map import; full-resolution tracks stay in NetCDF.
+
+    Split at missing/inactive positions and longitude jumps over 180 degrees.
+    Sample each contiguous segment, retaining its first and last positions.
+    """
+    if max_per_source < 1 or output_stride < 1 or max_age_days <= 0:
+        raise ValueError('Use positive sample size, output stride and maximum age.')
+    if int(max_per_source) != max_per_source or int(output_stride) != output_stride:
+        raise ValueError('Sample size and output stride must be integers.')
+    lon = trajectories.lon.transpose('trajectory', 'time').values
+    lat = trajectories.lat.transpose('trajectory', 'time').values
+    status = trajectories.status.transpose('trajectory', 'time').values
+    age = trajectories.age_seconds.transpose('trajectory', 'time').values / 86400
+    marker = trajectories.origin_marker.transpose('trajectory', 'time').values
+    times = np.asarray(trajectories.time.values, dtype='datetime64[s]')
+    if np.isnat(times).any() or not np.all(times[1:] > times[:-1]):
+        raise ValueError('Time must be finite and strictly increasing.')
+    sources = np.full(lon.shape[0], -1, dtype=int)
+    for i, values in enumerate(marker):
+        finite = values[np.isfinite(values)]
+        if not len(finite) or not np.all(finite == finite[0]):
+            raise ValueError('Missing or changing source marker.')
+        value = finite[0]
+        if value != int(value) or not 0 <= value < len(source_names):
+            raise ValueError('Unknown source marker.')
+        sources[i] = int(value)
+    features = []
+    selected_counts = []
+    colors = ['#e76f51', '#277da8', '#7b2cbf']
+    for source, name in enumerate(source_names):
+        candidates = np.flatnonzero(sources == source)
+        selected = candidates[np.linspace(0, len(candidates)-1,
+                              min(len(candidates), int(max_per_source)), dtype=int)]
+        selected_counts.append(len(selected))
+        for i in selected:
+            valid = (np.isfinite(lon[i]) & np.isfinite(lat[i])
+                     & (np.abs(lon[i]) <= 180) & (np.abs(lat[i]) <= 90)
+                     & (status[i] == 0) & np.isfinite(age[i])
+                     & (age[i] >= 0) & (age[i] <= max_age_days))
+            indices = np.flatnonzero(valid)
+            cuts = np.flatnonzero((np.diff(indices) != 1)
+                                  | (np.abs(np.diff(lon[i, indices])) > 180)) + 1
+            for segment, idx in enumerate(np.split(indices, cuts)):
+                if len(idx) < 2:
+                    continue
+                take = np.unique(np.r_[idx[::int(output_stride)], idx[-1]])
+                coordinates = np.column_stack((lon[i, take], lat[i, take])).astype(float).round(6).tolist()
+                features.append({'type': 'Feature', 'properties': {
+                    'name': f'{name} — particle {i}, segment {segment}',
+                    'source': str(name), 'source_index': source,
+                    'trajectory_index': int(i), 'segment': segment,
+                    'start_utc': str(times[take[0]])+'Z',
+                    'end_utc': str(times[take[-1]])+'Z',
+                    'display': 'Static full-period sampled trajectory; not time filtered',
+                    'stroke': colors[source % len(colors)], 'stroke-width': 1.5,
+                    'stroke-opacity': 0.6},
+                    'geometry': {'type': 'LineString', 'coordinates': coordinates}})
+    if not features:
+        raise ValueError('No valid trajectory segments with at least two positions.')
+    # One MultiLineString per source keeps the viewer's labels manageable.
+    grouped = []
+    for source, name in enumerate(source_names):
+        parts = [f for f in features if f['properties']['source_index'] == source]
+        if not parts:
+            continue
+        particles = len({f['properties']['trajectory_index'] for f in parts})
+        grouped.append({'type': 'Feature', 'properties': {
+            'name': f'{name} — {particles} sampled drift paths (static)',
+            'source': str(name), 'source_index': source,
+            'sampled_particles': particles, 'output_stride': int(output_stride),
+            'start_utc': min(f['properties']['start_utc'] for f in parts),
+            'end_utc': max(f['properties']['end_utc'] for f in parts),
+            'display': 'Static full-period sampled trajectories; not time filtered',
+            'stroke': colors[source % len(colors)], 'stroke-width': 1.5},
+            'geometry': {'type': 'MultiLineString',
+                         'coordinates': [f['geometry']['coordinates'] for f in parts]}})
+    collection = {'type': 'FeatureCollection',
+                  'name': 'Ogasawara sampled drift paths (static)',
+                  'features': grouped}
+    path = Path(path)
+    path.write_text(json.dumps(collection, separators=(',', ':'), allow_nan=False))
+    return {'path': str(path), 'features': len(grouped), 'line_segments': len(features),
+            'selected_particles_per_source': selected_counts,
+            'maximum_per_source': int(max_per_source), 'output_stride': int(output_stride),
+            'bytes': path.stat().st_size, 'time_animation': False}
