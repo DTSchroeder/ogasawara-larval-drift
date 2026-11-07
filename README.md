@@ -23,8 +23,9 @@ conda activate ogasawara-larval-drift
 jupyter lab
 ```
 
-Run cells in order. Enter your own Copernicus Marine username and password in
-the early account cell, then configure the scenario. **This repository contains
+Run cells in order. Leave credentials blank for the default public EDITO
+catalogue route, or enter your own Copernicus Marine login if you choose the
+Toolbox route. Configure the scenario in the settings cell. **This repository contains
 no account credentials.** Values entered in notebook code will be saved in your
 copy: clear them and clear outputs before sharing or committing a notebook.
 Do not upload Copernicus credential files or runtime data to this repository.
@@ -40,8 +41,17 @@ and try `RUN_PROFILE = 'quick_check'` before the full 30-day run.
 
 The guide includes terminal commands, kernel selection, result downloads,
 permanent S3 storage, troubleshooting, and import of the density NetCDF into
-EDITO MyOcean. A 24-hour real-current run and MyOcean import/rendering were verified on EDITO
-on 7 November 2026; see the guide for the tested setup and remaining limits.
+EDITO MyOcean. The full 30-day scenario was completed on EDITO on 7 November 2026 using
+public catalogue-linked currents: 2,700 particles, 4,608 integration steps and
+769 hourly export frames. Its NetCDF passed MyOcean import and map rendering.
+
+## EDITO catalogue inputs
+
+The default `CURRENT_SOURCE = 'edito_catalogue'` reads the existing Copernicus
+current product through EDITO catalogue asset links without a password.
+See [data sources and replacement decisions](DATA-SOURCES.md) for the exact
+catalogue entries, provenance, and why the Japanese protection polygons and
+global coastline mask are retained.
 
 ## Default scenario
 
@@ -50,7 +60,7 @@ on 7 November 2026; see the guide for the tested setup and remaining limits.
 - Passive OceanDrift particles at 1 m fixed depth; no species-specific behaviour.
 - Copernicus six-hourly 1/12° horizontal currents, with missing-current losses
   reported rather than replaced by zero currents.
-- 40-minute integration and two-hour saved output: 1,152 integration steps.
+- 10-minute integration and hourly saved output: 4,608 integration steps.
 - Encounter analysis at ages 7–30 days. Each particle counts once per target;
   denominators include all released particles. Targets are nonexclusive.
 
@@ -85,10 +95,12 @@ or recruitment probability. The 0.1° export grid is visualization binning and
 does not improve the forcing resolution. No land mask is applied to export
 cells. Count conservation is checked before writing and after reopening.
 
-The full 30-day grid export was tested in Colab. A 24-hour, 90-particle run
-completed on EDITO, and its density grid passed MyOcean import and first/final
-frame rendering. A full 30-day EDITO run and fresh Copernicus authentication on
-EDITO remain untested. See [the deployment check record](validation/edito_deployment_20261107.json).
+The full 30-day scenario completed on EDITO using current assets resolved
+through EDITO catalogue links. Every particle received 30 days of follow-up,
+with no missing-current or domain losses. The density NetCDF passed EDITO
+MyOcean import and map rendering. See [the full-run record](validation/edito_30day_20261107.json).
+Fresh Copernicus authentication is unnecessary for this public asset route; the
+optional authenticated Toolbox route remains a separate access option.
 See [README-EDITO.md](README-EDITO.md) for setup and permanent-storage instructions.
 
 ## Validation
@@ -97,6 +109,7 @@ In the notebook environment, run:
 
 ```bash
 python validate_edito_export.py
+python validate_edito_catalogue.py
 python validate_notebook.py
 ```
 

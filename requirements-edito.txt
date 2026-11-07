@@ -6,3 +6,4 @@ folium>=0.18,<1
 ipykernel
 nbformat
 netCDF4
+fsspec[http]

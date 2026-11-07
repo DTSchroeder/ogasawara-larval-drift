@@ -3,11 +3,13 @@
 The repository includes `ogasawara_larval_drift_edito.ipynb`, a self-contained
 Jupyter version without Google Colab dependencies. The same model, source
 islands, current download, MPA analysis and export logic are retained.
-A 24-hour, 90-particle real-current verification completed on EDITO on
-7 November 2026. The generated density NetCDF was imported into EDITO MyOcean,
-converted to ARCO, and rendered at the first and final time frames. The full
-30-day run and a fresh Copernicus login/download have not been tested on EDITO.
-See the [deployment check record](validation/edito_deployment_20261107.json).
+A 24-hour verification and the full 30-day scenario both completed on EDITO on
+7 November 2026. The full run used 2,700 particles, three daily release cohorts,
+4,608 ten-minute steps and hourly outputs. Every particle had a full 30-day
+follow-up, without missing-current or domain losses. Currents were resolved
+through EDITO catalogue links and read without a password. The exported density
+NetCDF passed MyOcean import and final-frame rendering. See the
+[full-run check record](validation/edito_30day_20261107.json).
 
 ## 1. Start a Jupyter workspace
 
@@ -21,9 +23,10 @@ No GPU is required. As a starting point for this small example, 2 CPUs and
 8 GB RAM are reasonable; this is a suggested configuration, not an EDITO-tested
 minimum. Keep enough disk space for the environment and downloaded currents.
 
-Your **EDITO account** opens the workspace. Your separate **Copernicus Marine
-account** downloads the model currents from Copernicus. Both are needed for a
-fresh run; this repository supplies neither account's credentials.
+Your **EDITO account** opens the workspace. The default **EDITO catalogue** current-access route uses public Copernicus
+assets and requires no Copernicus login. A separate Copernicus Marine account
+is needed only if you choose an access route requiring authentication. This
+repository supplies no account credentials.
 
 ## 2. Get this repository
 
@@ -82,8 +85,9 @@ but the available installation tools depend on the service image you choose.
    if the newly registered kernel is not listed.
 3. Run the first dependency-check cell with **Shift+Enter**. It should print
    package versions, including OpenDrift 1.14.12.
-4. In the early **Copernicus account configuration** cell, set
-   `COPERNICUS_USERNAME` and `COPERNICUS_PASSWORD` to your own login and run it.
+4. For the default `CURRENT_SOURCE = 'edito_catalogue'`, leave the early
+   Copernicus username/password variables blank. If you choose
+   `CURRENT_SOURCE = 'copernicus'`, enter your own login and run that account cell.
    Values entered in code are saved in your notebook copy. Clear them before
    sharing or committing it. Do not put EDITO or S3 credentials in that cell.
 5. Find the scenario-settings cell. Use `RUN_PROFILE = 'quick_check'` for a
@@ -138,7 +142,7 @@ In [EDITO MyOcean](https://my-ocean.dive.edito.eu/), open **Personal Catalogue �
 Upload**, select `edito_larval_density.nc`, and wait for preprocessing. Select
 `particle_density`, or a source-specific density variable, and use the time
 slider to view dispersal. This follows the currently documented user-data
-import route. The 24-hour verification export passed this import and rendered
+import route. Both the 24-hour and full 30-day exports passed this import and rendered
 correctly on 7 November 2026. Check each new export after uploading it.
 
 The export checks particle-count conservation before writing and after
@@ -194,3 +198,19 @@ This opens the notebook; it does not create the pinned environment. Complete the
 environment installation above, obtaining `requirements-edito.txt` (or
 `environment.yml` for Conda) from this repository.
 The clone-and-open route is the recommended starting point for this project.
+
+See [DATA-SOURCES.md](DATA-SOURCES.md) for catalogue input alternatives and
+longer-run configuration. Public Zarr access requires the `fsspec[http]`
+dependency included in `requirements-edito.txt`.
+
+### Colour range for sparse particle grids
+
+Most cells contain zero particles. MyOcean's automatic colour range can
+therefore collapse to **0–0**, producing an apparently empty map despite valid
+nonzero cells. Open the density layer's gear/settings control and set **Min = 0**
+and **Max = 0.5** particles/km² as a useful starting point for this scenario.
+Select a sequential palette (for example purple–green–yellow) and adjust the
+upper limit for the frame being inspected. This changes display only; it does
+not alter counts, trajectories or connectivity. The tested full-run view uses
+this manual range. Remove the old one-day layer from the map when comparing
+longer dates, or it will show an out-of-range warning.

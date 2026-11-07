@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-07",
+  "platform": "EDITO Datalab",
+  "scenario": "three daily release cohorts, each followed for 30 days",
+  "particles": 2700,
+  "source_groups": 3,
+  "release_days": 3,
+  "start_utc": "2025-05-01T00:00:00",
+  "end_utc": "2025-06-02T00:00:00",
+  "integration_step_seconds": 600,
+  "integration_steps": 4608,
+  "output_step_seconds": 3600,
+  "minimum_last_saved_age_days": 30.0,
+  "maximum_last_saved_age_days": 30.0,
+  "truncated_followup_particles": 0,
+  "deactivated_by_reason": {
+    "retired": 1800
+  },
+  "forcing_access": "public Copernicus Zarr asset resolved through EDITO Data Catalogue links",
+  "forcing_dimensions": {
+    "time": 131,
+    "depth": 3,
+    "latitude": 133,
+    "longitude": 133
+  },
+  "forcing_model": "cmems_mod_glo_phy-cur_anfc_0.083deg_PT6H-i",
+  "density_grid_dimensions": {
+    "time": 769,
+    "latitude": 110,
+    "longitude": 110
+  },
+  "density_count_conservation": "passed before writing and after reopening",
+  "density_file_bytes": 2393850,
+  "density_file_sha256": "2c78650258dded1d37711833a856e535dbe2a6ef0b0394892800e0c94a685e91",
+  "catalogue_reader_checks": "source consistency, bounded-memory reads, depth sign/order, time/spatial bracketing, round-trip and coverage rejection passed",
+  "viewer_import": "passed; converted to ARCO and added to map",
+  "viewer_final_frame": "2025-06-02 displayed",
+  "viewer_colour_scale": "manual 0\u20130.5 particles per km2; automatic scaling collapsed to zero on the sparse grid",
+  "credentials_required_for_catalogue_access": false,
+  "permanent_storage": "26 files saved to private EDITO project storage",
+  "viewer_mid_run_frame": "2025-05-20 displayed with the same manual colour range"
+}
