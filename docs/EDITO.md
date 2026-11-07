@@ -219,6 +219,7 @@ Relevant current EDITO documentation:
 | Authentication fails | Check the Copernicus username/password variables, rerun the account cell and rerun the download. Your EDITO password is a different login. |
 | `CURRENT_FILE` or scenario variables are missing | Run the imports and scenario settings, then download/validate currents before starting the model. Use Run All when starting a fresh kernel. |
 | No density NetCDF appears | Run the final export cell after the trajectory-analysis cells. Read its error before proceeding. |
+| The viewer shows only a grey rectangle / legend says 0 | Set the particle-density layer colour range to Min = 0, Max = 0.5; choose a sequential palette and a date inside the run. See [the grey-rectangle walkthrough](#if-the-viewer-shows-only-a-grey-rectangle). |
 | The viewer rejects a file | Upload `edito_larval_density.nc`, rather than `trajectories.nc` or the cell-area companion. The 24-hour example passed import; record any error from your new export. |
 | Files disappear after service restart | Restore them from permanent S3 storage or Git. Notebook working files are not automatically saved back to S3. |
 
@@ -239,17 +240,18 @@ See [DATA-SOURCES.md](DATA-SOURCES.md) for catalogue input alternatives and
 longer-run configuration. Public Zarr access requires the `fsspec[http]`
 dependency included in `requirements.txt`.
 
-### Colour range for sparse particle grids
+### If the viewer shows only a grey rectangle
 
-Most cells contain zero particles. MyOcean's automatic colour range can
-therefore collapse to **0–0**, producing an apparently empty map despite valid
-nonzero cells. Open the density layer's gear/settings control and set **Min = 0**
-and **Max = 0.5** particles/km² as a useful starting point for this scenario.
-Select a sequential palette (for example purple–green–yellow) and adjust the
-upper limit for the frame being inspected. This changes display only; it does
-not alter counts, trajectories or connectivity. The tested full-run view uses
-this manual range. Remove the old one-day layer from the map when comparing
-longer dates, or it will show an out-of-range warning.
+Check the legend under **Active model particle density, all sources**. If it shows only **0** or a **0–0** range, automatic scaling may be hiding the nonzero particle densities: most grid cells are empty.
+
+1. Click the **gear/settings icon on the particle-density layer** (not the background or in-situ layer).
+2. Set the colour limits manually to **Min = 0** and **Max = 0.5** particles/km². Adjust the maximum later if needed.
+3. Choose a **sequential colour palette**, for example purple–green–yellow.
+4. Select a time inside your run. Try **20 May 2025** for the full `30_day` scenario. For `quick_check`, use **1–2 May 2025** instead; 20 May is outside that short run.
+5. Zoom into the Ogasawara region, around **142.2°E, 27°N**, and move the time slider to follow dispersal. Particles may drift west of the release islands, so widen the view to find the plume.
+6. Optionally reduce **Opacity to about 40%** to see the bathymetry underneath. You can hide unrelated in-situ or geoid layers using their eye icons.
+
+The rectangle is the exported grid's footprint; it is not the particle cloud. Empty cells contain zero and may still be coloured. Changing the palette, range or opacity changes the display only. If no occupied cells appear after these steps, check the selected date, uploaded run and export checks; the grey rectangle alone does not prove that the simulation failed.
 
 ## Show individual drift paths on the map
 

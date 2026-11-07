@@ -54,6 +54,7 @@ Upload **`edito_larval_density.nc`** through **Personal Catalogue → Upload** i
 [EDITO MyOcean](https://my-ocean.dive.edito.eu/). Choose `particle_density` and
 move the time slider. If the automatic colour range shows 0–0, set the layer's
 minimum to **0** and maximum to **0.5** particles/km² as a starting point.
+If you see only a grey rectangle, follow the [viewer display walkthrough](docs/EDITO.md#if-the-viewer-shows-only-a-grey-rectangle).
 
 Generated outputs and credentials are excluded from this repository. Save your
 results to permanent EDITO storage before stopping the notebook service.
