@@ -1,6 +1,6 @@
 # Run the Ogasawara notebook on EDITO
 
-The repository includes `ogasawara_larval_drift_edito.ipynb`, a self-contained
+The repository includes `tutorial.ipynb`, a self-contained
 Jupyter version without Google Colab dependencies. The same model, source
 islands, current download, MPA analysis and export logic are retained.
 A 24-hour verification and the full 30-day scenario both completed on EDITO on
@@ -9,7 +9,7 @@ A 24-hour verification and the full 30-day scenario both completed on EDITO on
 follow-up, without missing-current or domain losses. Currents were resolved
 through EDITO catalogue links and read without a password. The exported density
 NetCDF passed MyOcean import and final-frame rendering. See the
-[full-run check record](validation/edito_30day_20261107.json).
+[full-run check record](../dev/validation/edito_30day_20261107.json).
 
 ## 1. Start a Jupyter workspace
 
@@ -39,8 +39,8 @@ cd ogasawara-larval-drift
 ```
 
 If you prefer uploads, use **Code → Download ZIP** on GitHub, extract it locally,
-and upload the files to JupyterLab. Keep `requirements-edito.txt` (or
-`environment.yml` for Conda) in the same working folder as the notebook. The EDITO notebook embeds its helpers and site table,
+and upload the files to JupyterLab. Keep `requirements.txt` (or
+`dev/environment.yml` for Conda) in the same working folder as the notebook. The EDITO notebook embeds its helpers and site table,
 so no companion Python modules need to be uploaded to execute it.
 
 ## 3. Install dependencies and register the kernel
@@ -52,7 +52,7 @@ terminal folder, run:
 
 ```bash
 uv venv --python 3.12 .venv
-uv pip install --python .venv/bin/python -r requirements-edito.txt
+uv pip install --python .venv/bin/python -r requirements.txt
 .venv/bin/python -m ipykernel install --user --name ogasawara-larval-drift --display-name "Ogasawara OpenDrift"
 ```
 
@@ -67,11 +67,11 @@ If your EDITO image provides Mamba or Conda instead of `uv`, the original
 environment file is also available:
 
 ```bash
-mamba env create -f environment.yml
+mamba env create -f dev/environment.yml
 conda run -n ogasawara-larval-drift python -m ipykernel install --user --name ogasawara-larval-drift --display-name "Ogasawara OpenDrift"
 ```
 
-Use `conda env create -f environment.yml` if only Conda is installed. Reuse an
+Use `conda env create -f dev/environment.yml` if only Conda is installed. Reuse an
 existing environment rather than trying to create it again. OpenDrift also
 [documents installation in EDITO's JupyterHub](https://opendrift.github.io/install.html#install-and-use-on-wekeo-and-edito),
 but the available installation tools depend on the service image you choose.
@@ -79,7 +79,7 @@ but the available installation tools depend on the service image you choose.
 ## 4. Open and configure the notebook
 
 1. In JupyterLab's file browser, open the cloned repository and double-click
-   **`ogasawara_larval_drift_edito.ipynb`**. Choose this EDITO version, rather than
+   **`tutorial.ipynb`**. Choose this EDITO version, rather than
    the Colab installation notebook.
 2. Select **Kernel → Change Kernel → Ogasawara OpenDrift**. Refresh JupyterLab
    if the newly registered kernel is not listed.
@@ -108,7 +108,7 @@ OpenDrift object.
 The notebook prints the full path to its run folder. It is under:
 
 ```text
-ogasawara-larval-drift/results/<timestamp>-<run-id>/
+runs/ogasawara-larval-drift/results/<timestamp>-<run-id>/
 ```
 
 Paths are relative to the notebook kernel's current working directory. Browse
@@ -192,16 +192,16 @@ EDITO also documents an [init-script route](https://help.edito.eu/en/articles/13
 In the JupyterLab service's **Init** configuration, use:
 
 - `PersonalInit`: `https://gitlab.mercator-ocean.fr/pub/edito-infra/configuration/-/raw/main/scripts/open-jupyter-notebook-url.sh`
-- `PersonalInitArgs`: `https://raw.githubusercontent.com/DTSchroeder/ogasawara-larval-drift/main/ogasawara_larval_drift_edito.ipynb`
+- `PersonalInitArgs`: `https://raw.githubusercontent.com/DTSchroeder/ogasawara-larval-drift/main/tutorial.ipynb`
 
 This opens the notebook; it does not create the pinned environment. Complete the
-environment installation above, obtaining `requirements-edito.txt` (or
-`environment.yml` for Conda) from this repository.
+environment installation above, obtaining `requirements.txt` (or
+`dev/environment.yml` for Conda) from this repository.
 The clone-and-open route is the recommended starting point for this project.
 
 See [DATA-SOURCES.md](DATA-SOURCES.md) for catalogue input alternatives and
 longer-run configuration. Public Zarr access requires the `fsspec[http]`
-dependency included in `requirements-edito.txt`.
+dependency included in `requirements.txt`.
 
 ### Colour range for sparse particle grids
 

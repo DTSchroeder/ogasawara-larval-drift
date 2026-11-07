@@ -13,7 +13,7 @@ currents: catalogue access does not change their producer or resolution.
 - [Eastward velocity item](https://api.dive.edito.eu/data/collections/climate_forecast-eastward_sea_water_velocity/items/3177a73a-c993-51c0-885d-1a8ae80da0ec)
 - [Northward velocity item](https://api.dive.edito.eu/data/collections/climate_forecast-northward_sea_water_velocity/items/0aba76c4-f72a-5f1f-b7db-cfb6cc4906c6)
 
-`edito_catalogue.py` selects the regional time-series asset, checks that both
+`dev/edito_catalogue.py` selects the regional time-series asset, checks that both
 velocity components reference the same store, brackets the requested bounds,
 and converts native negative elevation to positive-down depth. It records the
 resolved catalogue and asset URLs beside the cached NetCDF as `.source.json`.

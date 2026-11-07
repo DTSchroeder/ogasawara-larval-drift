@@ -12,3 +12,4 @@ credentials*
 .DS_Store
 .venv/
 *.partial.nc
+runs/
