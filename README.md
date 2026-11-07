@@ -12,7 +12,7 @@ island-group and published-MPA encounter matrices, and export maps and NetCDF.
 | Notebook | Environment |
 | --- | --- |
 | [Google Colab](ogasawara_larval_drift_colab.ipynb) | Self-contained, installs dependencies and embeds helper code |
-| [EDITO Jupyter](ogasawara_larval_drift_edito.ipynb) | Self-contained; install `environment.yml` first; see [EDITO setup](README-EDITO.md) |
+| [EDITO Jupyter](ogasawara_larval_drift_edito.ipynb) | Self-contained; create the Python 3.12 kernel first; see [EDITO setup](README-EDITO.md) |
 | [Standard Jupyter](ogasawara_larval_drift.ipynb) | Uses the Python helpers and `sites.csv` alongside the notebook |
 
 For local Jupyter:
@@ -33,13 +33,15 @@ Do not upload Copernicus credential files or runtime data to this repository.
 
 Follow the [step-by-step EDITO guide](README-EDITO.md): launch a JupyterLab
 service in [EDITO Datalab](https://datalab.dive.edito.eu/), clone this repository,
-install `environment.yml`, and select the **Ogasawara OpenDrift** kernel.
+install the Python 3.12 environment with `uv` (or Conda on compatible images),
+and select the **Ogasawara OpenDrift** kernel.
 Open **`ogasawara_larval_drift_edito.ipynb`**, enter your own Copernicus login,
 and try `RUN_PROFILE = 'quick_check'` before the full 30-day run.
 
 The guide includes terminal commands, kernel selection, result downloads,
 permanent S3 storage, troubleshooting, and import of the density NetCDF into
-EDITO MyOcean. EDITO execution and viewer import remain to be verified on-platform.
+EDITO MyOcean. A 24-hour real-current run and MyOcean import/rendering were verified on EDITO
+on 7 November 2026; see the guide for the tested setup and remaining limits.
 
 ## Default scenario
 
@@ -83,8 +85,10 @@ or recruitment probability. The 0.1° export grid is visualization binning and
 does not improve the forcing resolution. No land mask is applied to export
 cells. Count conservation is checked before writing and after reopening.
 
-The full 30-day grid export was tested in Colab. EDITO notebook execution and
-actual viewer import have not yet been tested inside an EDITO account.
+The full 30-day grid export was tested in Colab. A 24-hour, 90-particle run
+completed on EDITO, and its density grid passed MyOcean import and first/final
+frame rendering. A full 30-day EDITO run and fresh Copernicus authentication on
+EDITO remain untested. See [the deployment check record](validation/edito_deployment_20261107.json).
 See [README-EDITO.md](README-EDITO.md) for setup and permanent-storage instructions.
 
 ## Validation

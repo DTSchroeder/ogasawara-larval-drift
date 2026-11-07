@@ -10,3 +10,4 @@ __pycache__/
 credentials*
 *.log
 .DS_Store
+.venv/

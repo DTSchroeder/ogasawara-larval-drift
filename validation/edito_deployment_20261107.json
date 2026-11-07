@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-07",
+  "platform": "EDITO Datalab",
+  "service_chart": "ide/jupyter-python",
+  "service_chart_version": "2.5.7",
+  "default_service_python": "3.13.15",
+  "notebook_python": "3.12.3",
+  "installation": "uv virtual environment",
+  "opendrift": "1.14.12",
+  "scenario": "24-hour real-current verification using a previously downloaded Copernicus subset",
+  "particles": 90,
+  "source_groups": 3,
+  "integration_step_seconds": 2400,
+  "output_step_seconds": 7200,
+  "actual_end_utc": "2025-05-02T00:00:00",
+  "minimum_last_saved_age_days": 1.0,
+  "maximum_last_saved_age_days": 1.0,
+  "truncated_followup_particles": 0,
+  "deactivated_by_reason": {},
+  "density_grid_dimensions": {
+    "time": 13,
+    "latitude": 19,
+    "longitude": 15
+  },
+  "density_count_conservation": "passed before writing and after reopening",
+  "notebook_run_all": "passed",
+  "synthetic_end_to_end_check": "passed; analytic displacement within 2%",
+  "exporter_edge_case_checks": "passed",
+  "myocean_import": "passed; conversion to ARCO completed",
+  "myocean_rendering": "all-source density rendered over Ogasawara at 2025-05-01 and 2025-05-02",
+  "permanent_storage": "24 files saved to private EDITO project S3 storage",
+  "not_tested": [
+    "fresh Copernicus authentication/download on EDITO",
+    "full 30-day scenario on EDITO"
+  ],
+  "credentials_in_repository": false
+}

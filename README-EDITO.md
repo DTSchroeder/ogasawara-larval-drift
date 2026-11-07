@@ -3,8 +3,11 @@
 The repository includes `ogasawara_larval_drift_edito.ipynb`, a self-contained
 Jupyter version without Google Colab dependencies. The same model, source
 islands, current download, MPA analysis and export logic are retained.
-It has not yet been executed in an EDITO account. Its export logic was checked
-locally and in Colab; platform acceptance must be confirmed in your session.
+A 24-hour, 90-particle real-current verification completed on EDITO on
+7 November 2026. The generated density NetCDF was imported into EDITO MyOcean,
+converted to ARCO, and rendered at the first and final time frames. The full
+30-day run and a fresh Copernicus login/download have not been tested on EDITO.
+See the [deployment check record](validation/edito_deployment_20261107.json).
 
 ## 1. Start a Jupyter workspace
 
@@ -33,26 +36,42 @@ cd ogasawara-larval-drift
 ```
 
 If you prefer uploads, use **Code â†’ Download ZIP** on GitHub, extract it locally,
-and upload the files to JupyterLab. Keep `environment.yml` in the same working
-folder as the notebook. The EDITO notebook embeds its helpers and site table,
+and upload the files to JupyterLab. Keep `requirements-edito.txt` (or
+`environment.yml` for Conda) in the same working folder as the notebook. The EDITO notebook embeds its helpers and site table,
 so no companion Python modules need to be uploaded to execute it.
 
 ## 3. Install dependencies and register the kernel
 
-In the same terminal and repository folder:
+The EDITO **Jupyter-python 2.5.7** service inspected on 7 November 2026 uses
+Python 3.13 for its default kernel and provides `uv`, but no Conda/Mamba.
+Use an isolated Python 3.12 environment for this notebook. In the repository's
+terminal folder, run:
+
+```bash
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -r requirements-edito.txt
+.venv/bin/python -m ipykernel install --user --name ogasawara-larval-drift --display-name "Ogasawara OpenDrift"
+```
+
+This installs into the local `.venv` and leaves the service's default Python
+environment unchanged. The service used for deployment had Python 3.12 available
+at `/usr/bin/python3.12`; `uv` can select it automatically. The installed kernel
+must be selected in the notebook before running the dependency check.
+
+### Alternative for an image with Conda/Mamba
+
+If your EDITO image provides Mamba or Conda instead of `uv`, the original
+environment file is also available:
 
 ```bash
 mamba env create -f environment.yml
 conda run -n ogasawara-larval-drift python -m ipykernel install --user --name ogasawara-larval-drift --display-name "Ogasawara OpenDrift"
 ```
 
-This can take several minutes. If `mamba` is unavailable but `conda` is installed,
-use `conda env create -f environment.yml` for the first command. If the named
-environment already exists, reuse it; to update it from this repository, run
-`mamba env update -n ogasawara-larval-drift -f environment.yml`.
-
-OpenDrift also [documents installation in EDITO's JupyterHub](https://opendrift.github.io/install.html#install-and-use-on-wekeo-and-edito).
-This repository uses its own environment to pin the OpenDrift version used here.
+Use `conda env create -f environment.yml` if only Conda is installed. Reuse an
+existing environment rather than trying to create it again. OpenDrift also
+[documents installation in EDITO's JupyterHub](https://opendrift.github.io/install.html#install-and-use-on-wekeo-and-edito),
+but the available installation tools depend on the service image you choose.
 
 ## 4. Open and configure the notebook
 
@@ -119,7 +138,8 @@ In [EDITO MyOcean](https://my-ocean.dive.edito.eu/), open **Personal Catalogue â
 Upload**, select `edito_larval_density.nc`, and wait for preprocessing. Select
 `particle_density`, or a source-specific density variable, and use the time
 slider to view dispersal. This follows the currently documented user-data
-import route; the generated file has not yet been imported in EDITO itself.
+import route. The 24-hour verification export passed this import and rendered
+correctly on 7 November 2026. Check each new export after uploading it.
 
 The export checks particle-count conservation before writing and after
 reopening the file. It excludes inactive, missing, not-yet-released and
@@ -139,6 +159,10 @@ EDITO notebook service files are temporary. Copy the notebook and results to
 personal or project S3 storage before stopping the service. Copying to storage
 does not automatically register a dataset in the EDITO Data Catalogue. Private
 viewer upload and shared catalogue publication are different workflows.
+
+During verification, the viewer displayed an automatic deletion date one week
+after upload. Keep your original NetCDF in permanent storage and check the
+retention date shown for each Personal Catalogue upload.
 Do not include a notebook containing credentials when publishing results.
 
 Relevant current EDITO documentation:
@@ -155,7 +179,7 @@ Relevant current EDITO documentation:
 | Authentication fails | Check the Copernicus username/password variables, rerun the account cell and rerun the download. Your EDITO password is a different login. |
 | `CURRENT_FILE` or scenario variables are missing | Run the imports and scenario settings, then download/validate currents before starting the model. Use Run All when starting a fresh kernel. |
 | No density NetCDF appears | Run the final export cell after the trajectory-analysis cells. Read its error before proceeding. |
-| The viewer rejects a file | Upload `edito_larval_density.nc`, rather than `trajectories.nc` or the cell-area companion. Record the viewer's error; actual EDITO import remains unverified. |
+| The viewer rejects a file | Upload `edito_larval_density.nc`, rather than `trajectories.nc` or the cell-area companion. The 24-hour example passed import; record any error from your new export. |
 | Files disappear after service restart | Restore them from permanent S3 storage or Git. Notebook working files are not automatically saved back to S3. |
 
 ## Optional: open the notebook using EDITO's init script
@@ -167,5 +191,6 @@ In the JupyterLab service's **Init** configuration, use:
 - `PersonalInitArgs`: `https://raw.githubusercontent.com/DTSchroeder/ogasawara-larval-drift/main/ogasawara_larval_drift_edito.ipynb`
 
 This opens the notebook; it does not create the pinned environment. Complete the
-environment installation above, obtaining `environment.yml` from this repository.
+environment installation above, obtaining `requirements-edito.txt` (or
+`environment.yml` for Conda) from this repository.
 The clone-and-open route is the recommended starting point for this project.

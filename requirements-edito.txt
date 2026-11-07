@@ -1,0 +1,8 @@
+# For EDITO Jupyter images that provide uv rather than Conda/Mamba.
+# Use a Python 3.12 virtual environment (see README-EDITO.md).
+opendrift==1.14.12
+copernicusmarine>=2.2,<3
+folium>=0.18,<1
+ipykernel
+nbformat
+netCDF4
